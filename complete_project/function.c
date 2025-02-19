@@ -359,16 +359,29 @@ void searchCategoryByName()
     printf("+------------+--------------------------------+\n");
 }
 
-void sortCategoriesByName() {
-    printf("1. Ascending order\n");
-    printf("2. Descending order\n");
-    printf("Select: ");
+void sortCategoriesByName() 
+{
     int choice;
-    scanf("%d", &choice);
+    while (1)
+    {
+    	printf("1. Ascending order\n");
+	    printf("2. Descending order\n");
+	    printf("Select: ");
+    
+    	if (scanf("%d", &choice) == 1 && (choice == 1 || choice == 2))
+    	{
+        	break;
+    	}
+    
+    	printf("Invalid choice! Please enter 1 or 2.\n");
 
-    for (int i = 0; i < categoryCount - 1; i++) {
+    	while (getchar() != '\n');
+    }
+
+    for (int i = 0; i < categoryCount - 1; i++) 
+    {
         for (int j = i + 1; j < categoryCount; j++) 
-		{
+	{
             if ((choice == 1 && strcmp(categories[i].CategoryName, categories[j].CategoryName) > 0) ||
                 (choice == 2 && strcmp(categories[i].CategoryName, categories[j].CategoryName) < 0)) 
 			{
