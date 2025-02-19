@@ -894,13 +894,24 @@ void SortProductsByPrice()
         return;
     }
 
-    printf("1. Ascending order\n");
-    printf("2. Descending order\n");
-    printf("Select: ");
-    int choice;
-    scanf("%d", &choice);
-
-    for (int i = 0; i < productCount - 1; i++)
+	int choice;
+	while(1)
+	{
+		printf("1. Ascending order\n");
+		printf("2. Descending order\n");
+		printf("Select: ");
+		
+		if (scanf("%d", &choice) == 1 && (choice == 1 || choice == 2))
+		{
+		    break;
+		}
+		
+		printf("Invalid choice! Please enter 1 or 2.\n");
+				
+		while (getchar() != '\n');
+	}
+	
+	for (int i = 0; i < productCount - 1; i++)
     {
         for (int j = i + 1; j < productCount; j++)
         {
@@ -913,7 +924,7 @@ void SortProductsByPrice()
             }
         }
     }
-
+    
     printf("Sorting completed!\n");
     saveProductToFile();
     showProducts();
