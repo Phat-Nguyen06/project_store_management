@@ -1105,7 +1105,7 @@ void createDefaultAdminFile()
     fclose(file);
 }
 
-// Hàm nhap mat khau hien thi "*"
+// HÃ m nhap mat khau hien thi "*"
 void getPasswordInput(char *password, int maxLen)
 {
     int i = 0;
@@ -1154,9 +1154,7 @@ void adminLogin()
 
     while (1) 
     {
-        system("cls");  // Xóa màn hình
-
-        // Giao di?n d?p cho màn hình dang nh?p
+        system("cls");
         printf("\n\n");
         printf("%75s\n", "***Store Management System Using C***");
         printf("\n");
@@ -1168,7 +1166,6 @@ void adminLogin()
         getPasswordInput(passwordInput, 50);
         printf("%72s\n", "===============================");
 
-        // Ki?m tra tên ngu?i dùng và m?t kh?u
         if (strcmp(inputUsername, admin.username) == 0 && strcmp(passwordInput, admin.password) == 0) 
         {
             printf("\nLogin successful! Welcome, %s.\n", admin.username);
@@ -1176,11 +1173,10 @@ void adminLogin()
         }
         else 
         {
-            // N?u nh?p sai, làm m?i màn hình và hi?n th? thông báo l?i
             printf("\nInvalid username or password. Please try again.\n");
             printf("Press any key to try again...");
-            getchar();  // Ð? ch? ngu?i dùng nh?n phím
-            getchar();  // Nh?n thêm m?t ký t? nh?p t? ngu?i dùng
+            getchar();
+            getchar();
         }
     }
 }
