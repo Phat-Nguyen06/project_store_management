@@ -1270,6 +1270,8 @@ void askGoBackOrExit()
             printf("Exiting program...\n");
             printf("========= Thank You =========\n");
 			printf("========= See You Soon =========\n");
+		free(categories);
+		free(products);
             exit(0);
         }
         else if (choice == 'b')
