@@ -26,6 +26,7 @@ void categoryMenu()
         printf("[0]. Return to main menu\n");
         printf("Enter your selection: ");
         scanf("%d", &choice);
+        getchar();
         system("cls");
         switch (choice)
         {
@@ -47,7 +48,6 @@ void categoryMenu()
         case 6:
             sortCategoriesByName();
             break;
-        	break;
         case 0:
             printf("\nBack to main menu...\n");
             break;
@@ -68,6 +68,7 @@ void mainMenu()
         printf("[0]. Exit the program\n");
         printf("Enter your selection: ");
         scanf("%d", &choice);
+        getchar();
         system("cls");
         switch (choice)
         {
@@ -115,7 +116,6 @@ void addCategory()
 
     while (1) 
     {
-    	getchar();
         printf("\nEnter Category ID: ");
         fgets(newCategory.CategoryId, sizeof(newCategory.CategoryId), stdin);
         newCategory.CategoryId[strcspn(newCategory.CategoryId, "\n")] = '\0';
@@ -123,7 +123,6 @@ void addCategory()
         if (strlen(newCategory.CategoryId) == 0 || strlen(newCategory.CategoryId) > 9) 
         {
             printf("Error: Category ID cannot be empty or exceed %d characters.\n", 9);
-            printf("Please press enter again to confirm input.\n");
             continue;
         }
 
@@ -133,7 +132,6 @@ void addCategory()
             if (strcmp(categories[i].CategoryId, newCategory.CategoryId) == 0) 
             {
                 printf("Error: Category ID already exists! Please enter a unique ID.\n");
-                printf("Please press enter again to confirm input.\n");
                 isDuplicate = 1;
                 break;
             }
@@ -226,7 +224,7 @@ void editCategory()
     printf("| %-10s | %-30s |\n", categories[found].CategoryId, categories[found].CategoryName);
     printf("+------------+--------------------------------+\n");
 
-    while (1) 
+    while (1)
     {
         printf("Enter new category name: ");
         fgets(categories[found].CategoryName, sizeof(categories[found].CategoryName), stdin);
@@ -262,7 +260,6 @@ void editCategory()
     askGoBackOrExit();
 }
 
-
 void deleteCategory()
 {
 	if(categoryCount == 0)
@@ -281,9 +278,9 @@ void deleteCategory()
 			printf("+------------+--------------------------------+\n");
 		}
 	char id[10];
-	printf("Enter the category code to delete:  ");
-	scanf("%s", id);
-	getchar();
+	printf("Enter the category code to delete: ");
+	fgets(id, sizeof(id), stdin);
+	id[strcspn(id, "\n")] = '\0';
 	
 	int found = -1;
 	
@@ -292,6 +289,7 @@ void deleteCategory()
 		if(strcmp(id, categories[i].CategoryId) == 0)
 		{
 			found = i;
+			break;
 		}
 	}
 	
@@ -310,12 +308,17 @@ void deleteCategory()
 	if (categoryCount > 0)
 	{
 	    categories = (struct Category *)realloc(categories, categoryCount * sizeof(struct Category));
-	    if (categories == NULL && categoryCount > 0)
+	    if (categories == NULL)
 	    {
-	    	saveCategoriesToFile();
 	        printf("Memory allocation error!\n");
 	        exit(1);
 	    }
+	}
+	else
+	{
+	    free(categories);
+	    categories = NULL;
+	    printf("All categories have been deleted. The category list is now empty.\n");
 	}
 	
 	printf("Delete category successfully\n");
@@ -331,32 +334,50 @@ void searchCategoryByName()
         return;
     }
 
-    char name[10];
-    printf("Enter the category name to search: ");
-    scanf("%s", name);
-    getchar();
+    char name[50];
+    int found;
 
-    int found = -1;
-
-    printf("+------------+--------------------------------+\n");
-    printf("| %-10s | %-30s |\n", "ID", "NAME");
-    printf("+------------+--------------------------------+\n");
-
-    for (int i = 0; i < categoryCount; i++)
+    while (1)
     {
-        if (strcmp(name, categories[i].CategoryName) == 0)
+        printf("Enter the category name to search: ");
+        fgets(name, sizeof(name), stdin);
+        name[strcspn(name, "\n")] = '\0';
+
+        if (strlen(name) == 0)
         {
-            printf("| %-10s | %-30s |\n", categories[i].CategoryId, categories[i].CategoryName);
-            found = 1;
+            printf("Error: Category name cannot be empty. Please re-enter.\n");
+            continue;
+        }
+
+        found = 0;
+        for (int i = 0; i < categoryCount; i++)
+        {
+            if (strstr(categories[i].CategoryName, name))
+            {
+                if (!found)
+                {
+                    printf("+------------+--------------------------------+\n");
+                    printf("| %-10s | %-30s |\n", "ID", "NAME");
+                    printf("+------------+--------------------------------+\n");
+                }
+
+                printf("| %-10s | %-30s |\n", categories[i].CategoryId, categories[i].CategoryName);
+                printf("+------------+--------------------------------+\n");
+
+                found = 1;
+            }
+        }
+
+        if (!found)
+        {
+            printf("No matching category found for '%s'. Please try again.\n", name);
+        }
+        else
+        {
+            askGoBackOrExit();
+            break;
         }
     }
-
-    if (found == -1)
-    {
-        printf("| %-10s | %-30s |\n", "N/A", "No matching category found.");
-    }
-
-    printf("+------------+--------------------------------+\n");
 }
 
 void sortCategoriesByName() 
@@ -431,7 +452,6 @@ void loadCategoriesFromFile()
     printf("Loaded %d categories from file.\n", categoryCount);
 }
 
-
 void saveCategoriesToFile() 
 {
     FILE *file = fopen("category.bin", "wb");
@@ -444,7 +464,8 @@ void saveCategoriesToFile()
     fwrite(&categoryCount, sizeof(int), 1, file);
     if (categoryCount > 0) 
 	{
-        fwrite(categories, sizeof(struct Category), categoryCount, file);
+        fwrite(categories, 
+		sizeof(struct Category), categoryCount, file);
     }
 
     fclose(file);
@@ -472,6 +493,7 @@ void printProductMenu()
 		printf("[0]. Return to main menu\n");
 		printf("Enter your selection: ");
         scanf("%d", &choice);
+        getchar();
         system("cls");
         switch (choice)
         {
@@ -531,15 +553,12 @@ void showProducts() {
     askGoBackOrExit();
 }
 
-
 void addProduct()
 {
     struct Product newProduct;
 
     while (1)
     {
-        getchar();
-
         while (1)
         {
             printf("Enter product code: ");
@@ -679,7 +698,6 @@ void editProduct()
     char id[10];
     int found = -1;
 
-	getchar();
     while (1)
     {
         printf("Enter the product code to be edited: ");
@@ -794,21 +812,32 @@ void deleteProduct()
     }
 
     char id[10];
-    int found = 0;
+    int found;
 
     while (1)
     {
         printf("Enter the product code to delete: ");
-        scanf("%s", id);
+        fgets(id, sizeof(id), stdin);
+        id[strcspn(id, "\n")] = '\0';
 
+        if (strlen(id) == 0)
+        {
+            printf("Error: Product code cannot be empty. Please re-enter.\n");
+            continue;
+        }
+
+        found = 0;
         for (int i = 0; i < productCount; i++)
         {
             if (strcmp(products[i].productId, id) == 0)
             {
                 found = 1;
                 printf("Are you sure you want to delete? (1: Yes, 0: No): ");
-                int confirm;
-                scanf("%d", &confirm);
+
+                char confirmStr[10];
+                fgets(confirmStr, sizeof(confirmStr), stdin);
+                int confirm = atoi(confirmStr);
+
                 if (confirm == 1)
                 {
                     for (int j = i; j < productCount - 1; j++)
@@ -816,7 +845,22 @@ void deleteProduct()
                         products[j] = products[j + 1];
                     }
                     productCount--;
-                    products = (struct Product*)realloc(products, productCount * sizeof(struct Product));
+
+                    if (productCount > 0)
+                    {
+                        products = (struct Product*)realloc(products, productCount * sizeof(struct Product));
+                        if (products == NULL)
+                        {
+                            printf("Memory allocation error!\n");
+                            exit(1);
+                        }
+                    }
+                    else
+                    {
+                        free(products);
+                        products = NULL;
+                        printf("All products have been deleted. The product list is now empty.\n");
+                    }
 
                     printf("Product deleted successfully!\n");
                     saveProductToFile();
@@ -842,7 +886,7 @@ void searchProductByName()
     }
 
     char name[50];
-    int found = 0;
+    int found;
 
     while (1)
     {
@@ -858,8 +902,8 @@ void searchProductByName()
         }
 
         printf("+-----------------+--------------------+--------------------+------------+------------+\n");
-	    printf("| %-15s | %-18s | %-18s | %-10s | %-10s |\n", "Product Code", "Category Code", "Product Name", "Quantity", "Price");
-	    printf("+-----------------+--------------------+--------------------+------------+------------+\n");
+        printf("| %-15s | %-18s | %-18s | %-10s | %-10s |\n", "Product Code", "Category Code", "Product Name", "Quantity", "Price");
+        printf("+-----------------+--------------------+--------------------+------------+------------+\n");
 
         found = 0;
         for (int i = 0; i < productCount; i++)
@@ -869,22 +913,25 @@ void searchProductByName()
                 printf("| %-15s | %-18s | %-18s | %-10d | %-10d |\n",
                        products[i].productId, products[i].categoryId, products[i].productName, 
                        products[i].quantity, products[i].price);
-            	printf("+-----------------+--------------------+--------------------+------------+------------+\n");
                 found = 1;
-                askGoBackOrExit();
             }
         }
 
         if (!found)
         {
+            printf("| %-15s | %-18s | %-18s | %-10s | %-10s |\n", "N/A", "N/A", "No matching product found.", "N/A", "N/A");
+            printf("+-----------------+--------------------+--------------------+------------+------------+\n");
             printf("No matching products found for the name '%s'. Please try again.\n", name);
         }
         else
         {
+            printf("+-----------------+--------------------+--------------------+------------+------------+\n");
+            askGoBackOrExit();
             break;
         }
     }
 }
+
 
 void SortProductsByPrice()
 {
